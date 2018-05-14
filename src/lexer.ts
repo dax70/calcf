@@ -8,6 +8,10 @@ export enum TokenType {
 
 const leftParen = '(';
 const rightParen = ')';
+const plus = '-';
+const minus = '-';
+const equals = '=';
+
 
 export type Token = {
   type: TokenType,
@@ -29,14 +33,14 @@ function isSpace(char: string) {
 
 function isAlphaNumeric(char: string) {
   const code = char.charCodeAt(0);
-  return ((code > 47 && code < 58) && // numeric (0-9)
-          (code > 64 && code < 91) && // upper alpha (A-Z)
+  return ((code > 47 && code < 58) || // numeric (0-9)
+          (code > 64 && code < 91) || // upper alpha (A-Z)
           (code > 96 && code < 123)); // lower alpha (a-z)
 }
 
 function isAlpha(char: string) {
   const code = char.charCodeAt(0);
-  return ((code > 64 && code < 91) && // upper alpha (A-Z)
+  return ((code > 64 && code < 91) || // upper alpha (A-Z)
           (code > 96 && code < 123)); // lower alpha (a-z)
 }
 
@@ -45,20 +49,28 @@ function isNumeric(char: string) {
   return (code > 47 && code < 58); // numeric (0-9)
 }
 
+function isSymbol(char: string) {
+  return (char === leftParen ||
+          char === rightParen ||
+          char === plus ||
+          char === minus ||
+          char === equals);
+}
+
 const lexIdentifier: LexerFn = (lexer) => {
   let c = lexer.next();
   while (c) {
     if(isAlphaNumeric(c)) {
       c = lexer.next();
     }
-    else if(isSpace(c)) {
+    else if(isSpace(c) || isSymbol(c)) {
       lexer.backup();
+      lexer.emitToken(TokenType.Identifier);
       return lexFn;
     }
   }
 
-  lexer.emitToken(TokenType.Identifier);
-  return lexFn;
+  return null;
 }
 
 const lexLiteral: LexerFn = (lexer) => {
@@ -108,9 +120,9 @@ export class Lexer {
   name: string; // use for errors
   input: string; // the string being scanned
   start: number; // start position of this token
-  pos: number; // current position in the input
-  width: number; // width of last rune read
-  tokens: Array<Token>; // scanned tokens
+  pos: number = 0; // current position in the input
+  width: number = 0; // width of last rune read
+  tokens: Array<Token> = []; // scanned tokens
 
   scan(input: string): LexerResult {
     this.input = input;
@@ -132,17 +144,18 @@ export class Lexer {
     this.pos -= this.width; // on the lexer
   }
 
-  emitToken(type: TokenType): Token {
+  emitToken(type: TokenType) {
     // Token becomes the substring between start and pos
     const { input, start, pos } = this;
-    return {
+    this.tokens.push({
       type,
       value: input.slice(start, pos)
-    }
+    });
   }
 
   error(str: string) {
     // TODO: make this a stateFn
+    this.name = str;
     // tslint:disable-next-line:no-console
     console.log(str);
   }
