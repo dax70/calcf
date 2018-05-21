@@ -216,3 +216,18 @@ it('lex with power with spaces', () => {
   expect('3').toEqual(tokens[8].value);
   expect(')').toEqual(tokens[9].value);
 });
+
+it('lex with function', () => {
+  const lexer = new Lexer();
+  const {tokens, errors} = lexer.scan('f(x) = x + 2');
+  expect(8).toEqual(tokens.length);
+  expect(0).toEqual(errors.length);
+  expect('f').toEqual(tokens[0].value);
+  expect('(').toEqual(tokens[1].value);
+  expect('x').toEqual(tokens[2].value);
+  expect(')').toEqual(tokens[3].value);
+  expect('=').toEqual(tokens[4].value);
+  expect('x').toEqual(tokens[5].value);
+  expect('+').toEqual(tokens[6].value);
+  expect('2').toEqual(tokens[7].value);
+});

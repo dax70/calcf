@@ -139,7 +139,6 @@ const lexFn: LexerFn = (lexer) => {
     }
   }
 
-  // lexer.error('Error!');
   // tslint:disable-next-line:no-console
   console.log('EOF');
   return null;
