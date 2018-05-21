@@ -7,17 +7,19 @@ export enum TokenType {
   Grouping
 }
 
-const leftParen = '(';
-const rightParen = ')';
-const plus = '+';
-const minus = '-';
-const multiply = '*';
-const divide = '/';
-const equals = '=';
-const power = '^';
-const decimal = '.';
-const coma = ',';
+const special = ['(',')','+','-','*','/','=','^','.',','];
 
+const [
+  leftParen,
+  rightParen,
+  plus, minus,
+  multiply,
+  divide,
+  equals,
+  power,
+  decimal,
+  coma
+] = special;
 
 
 export type Token = {
@@ -56,7 +58,7 @@ function isNumeric(char: string) {
   return (code > 47 && code < 58); // numeric (0-9)
 }
 
-function isSymbol(char: string) {
+function isOperator(char: string) {
   return (char === equals ||
           char === plus ||
           char === minus ||
@@ -97,12 +99,12 @@ const lexLiteral: LexerFn = (lexer) => {
   return lexFn;
 }
 
-const lexSymbol: LexerFn = (lexer) => {
+const lexOperator: LexerFn = (lexer) => {
   lexer.start = lexer.pos;
   let c = lexer.next();
 
   // TODO: look for quotes?
-  while (c && isSymbol(c)) {
+  while (c && isOperator(c)) {
       c = lexer.next();
   }
 
@@ -126,9 +128,9 @@ const lexFn: LexerFn = (lexer) => {
       lexer.backup();
       return lexLiteral;
     }
-    else if(isSymbol(c)) {
+    else if(isOperator(c)) {
       lexer.backup();
-      return lexSymbol;
+      return lexOperator;
     }
     else if(isGrouping(c)) {
       lexer.start = lexer.pos -1;

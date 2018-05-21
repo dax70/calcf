@@ -13,6 +13,27 @@ it('lex dont explode', () => {
   expect('2').toEqual(tokens[1].value);
 });
 
+it('lex identifier', () => {
+  const lexer = new Lexer();
+  const {tokens, errors} = lexer.scan('abc 17');
+  expect(2).toEqual(tokens.length);
+  expect(0).toEqual(errors.length);
+  expect('abc').toEqual(tokens[0].value);
+  expect('17').toEqual(tokens[1].value);
+});
+
+it('lex 2 identifier', () => {
+  const lexer = new Lexer();
+  const {tokens, errors} = lexer.scan('abc + x - 17');
+  expect(5).toEqual(tokens.length);
+  expect(0).toEqual(errors.length);
+  expect('abc').toEqual(tokens[0].value);
+  expect('+').toEqual(tokens[1].value);
+  expect('x').toEqual(tokens[2].value);
+  expect('-').toEqual(tokens[3].value);
+  expect('17').toEqual(tokens[4].value);
+});
+
 it('lex number', () => {
   const lexer = new Lexer();
   const {tokens, errors} = lexer.scan('x 25');
