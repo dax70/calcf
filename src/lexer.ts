@@ -2,7 +2,6 @@
 export enum TokenType {
   Literal,
   Identifier,
-  Number,
   Operator,
   Grouping
 }

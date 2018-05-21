@@ -8,7 +8,9 @@
   },
   "rules": {
     "array-type": false,
+    "interface-name": false,
     "interface-over-type-literal": false,
-    "member-access": false
+    "member-access": false,
+    "max-classes-per-file": false
   }
 }
